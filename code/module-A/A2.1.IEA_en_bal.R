@@ -207,6 +207,7 @@
 
     A.IEA_en_stat_ctry_hist <- A.IEA_en_stat_ctry_hist %>%
         tidyr::gather( key = years, value = energy_consumption, tidyselect::all_of(X_IEA_years)) %>%
+        dplyr::filter(!is.na(energy_consumption)) %>%
         dplyr::mutate( energy_consumption = if_else( PRODUCT %in% TJ_to_kt_natural_gas_list_no_tjnet,
                                                      energy_consumption / conversionFactor_naturalgas_TJ_per_kt_Gross,
                                             if_else( PRODUCT %in% TJ_to_kt_natural_gas_list_tjnet,

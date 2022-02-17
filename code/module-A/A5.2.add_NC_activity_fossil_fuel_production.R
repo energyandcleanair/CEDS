@@ -89,8 +89,8 @@ disaggregate_country_trend <- function(data_set, disagg_iso_list, trend_start_ye
 # 1. Define settings and script constants
 
 # IEA oil production years
-IEA_EXT_TO_BP_END_YEAR <- paste0( "X", ( IEA_end_year + 1 ): BP_actual_last_year )
-IEA_YEARS_x <- paste0( "X", IEA_start_year : BP_actual_last_year )
+IEA_EXT_TO_BP_END_YEAR <- if(IEA_end_year==BP_last_year){c()}else{paste0( "X", ( IEA_end_year + 1 ): BP_last_year )}
+IEA_YEARS_x <- paste0( "X", IEA_start_year : BP_last_year )
 extended_IEA_back <- paste0('X', 1800: (IEA_start_year-1))
 
 # Define years to scale up Hyde oil production for Bahrain
@@ -214,7 +214,8 @@ Hyde_oil_wide_fsu_split <-
                                                 'kgz', 'lva', 'ltu',
                                                 'mda', 'tjk', 'tkm',
                                                 'ukr', 'uzb', 'rus' ),
-                          write_over_values = T )
+                          write_over_values = T,
+                          allow_dropped_data = T)
 
 # Disaggregate Hyde's Czechoslovakia data (1914-1970) using IEA trend for last 3 years (1971-1973).
 # Czechoslovakia member countries are not listed in raw Hyde data, but total production
@@ -252,7 +253,8 @@ Hyde_oil_wide_yug_split <-
                           disaggregate_iso = c( 'bih', 'hrv', 'mkd',
                                                 'svn', 'scg', 'srb',
                                                 'mne'),
-                          write_over_values = T )
+                          write_over_values = T,
+                          allow_dropped_data = T)
 
 # Merge Hyde and IEA with disaggregated data. Remove overlapping years.
 Hyde_IEA_split <- left_join(select(IEA_oil, -c(X1960:X1970)), select(Hyde_oil_wide_fsu_split, -c(X1971:X1975)), by = c("iso", "units")) %>%

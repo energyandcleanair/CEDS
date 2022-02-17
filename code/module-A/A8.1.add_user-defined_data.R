@@ -115,6 +115,7 @@ batch <- 0
 # ------------------------------------------------------------------------------
 # 3. Execute processing loop
 while ( nrow( instructions ) > 0 ) {
+    print(sprintf("%d instructions left", nrow(instructions)))
     # Update variables for each run of the loop
     batch <- batch + 1
     all_activity_data <- activity$all_activity_data

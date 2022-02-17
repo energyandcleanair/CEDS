@@ -875,11 +875,11 @@ if( bp_gas_tkm_1992$X1992 == 0 ){
 # Naturgal Gas - split other into industry and residential
 # Calculate ratio --> use russia
     ratio = USSR_percentages[ which( USSR_percentages$agg_fuel == 'natural_gas' & USSR_percentages$agg_sector == 'Industry' ),
-                              paste0( 'X', 1985 )] /
+                              paste0( 'X', 1990 )] /
       (USSR_percentages[ which( USSR_percentages$agg_fuel == 'natural_gas' & USSR_percentages$agg_sector == 'Residential' ),
-                         paste0( 'X', 1985 ) ] +
+                         paste0( 'X', 1990 ) ] +
          USSR_percentages[ which( USSR_percentages$agg_fuel == 'natural_gas' & USSR_percentages$agg_sector == 'Industry' ),
-                           paste0( 'X', 1985 ) ] )
+                           paste0( 'X', 1990 ) ] )
 
 # Correct some tjk values using the calculated ratio
     corrected[ which( corrected$iso == 'tjk' & corrected$agg_fuel == 'natural_gas' &
@@ -1286,8 +1286,8 @@ if( bp_gas_tkm_1992$X1992 == 0 ){
                                      "heavy_oil-adl-dom-supply", "refinery-and-natural-gas" ) )
 
     if( any( negative_activity_check[, X_IEA_years ] < 0 ) ){
-
-      stop( "There are negative values in the activity data. This should not occur..." )
+      # Some IEA activity data is actually negative
+      warning( "There are negative values in the activity data. This should not occur..." )
 
     }
 

@@ -165,7 +165,7 @@
       dplyr::filter( is.na( fuel ) ) %>%
       dplyr::select( PRODUCT )
 
-  if( unique( un_mapped_fuels$PRODUCT ) != "Crude/NGL/feedstocks/non-crude (if no detail)" ){
+  if( nrow(un_mapped_fuels)>0 && unique( un_mapped_fuels$PRODUCT ) != "Crude/NGL/feedstocks/non-crude (if no detail)" ){
 
       unique_unmapped_conv_fac_prods <- unique( un_mapped_fuels$PRODUCT )
       unique_unmapped_conv_fac_prods <- subset( unique_unmapped_conv_fac_prods,
@@ -359,13 +359,13 @@
 # Constantly extend heat value forward, if needed, through final CEDS year
   if( last( IEA_years ) < last( emissions_years ) ){
 
-    coal_all_ext_forward <- coal_all_ext %>%
+    coal_all_ext <- coal_all_ext %>%
         dplyr::mutate_at( years_to_extend_to, funs( identity ( !!rlang::sym( X_IEA_end_year ) ) ) )
 
   }
 
 # ---------------------------------------------------------------------------
 # 5. Output
-  writeData( coal_all_ext_forward, "MED_OUT", "A.coal_heat_content" )
+  writeData( coal_all_ext, "MED_OUT", "A.coal_heat_content" )
 
   logStop()

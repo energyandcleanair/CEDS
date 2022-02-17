@@ -13,7 +13,7 @@
 # Set of historical years for which the CEDS system has IEA data.
 
 # USER SET DATA - Set this to the last year of the IEA data used
-IEA_end_year  <- 2017  # Latest year of IEA data; used to compare BP and IEA
+IEA_end_year  <- 2019  # Latest year of IEA data; used to compare BP and IEA
 
 IEA_start_year  <- 1960 # First year of IEA data
 X_IEA_end_year  <- paste0( "X", IEA_end_year  ) # First Xyear of IEA data
@@ -26,18 +26,18 @@ BP_last_year <- 2019
 
 # USER SET DATA - Set this to point to the name of the BP statisical data, which should be
 # Located in the inputs/energy folder
-BP_data_file_name <- "bp-stats-review-2020-all-data"
+BP_data_file_name <- "bp-stats-review-2021-all-data"
 # NOTE - Need to also change this file name in the makefile
 
 # The actual last year of data provided in the BP energy data. User need to set an additional value for this object if
 # they are utilizing a BP_data_file_name not listed below:
 if( BP_data_file_name == "BP_energy_data.xlsx" ){ BP_actual_last_year <- 2014}
-if( BP_data_file_name == "bp-stats-review-2020-all-data" ){ BP_actual_last_year <- 2019}
+if( BP_data_file_name == "bp-stats-review-2021-all-data" ){ BP_actual_last_year <- 2020}
 
 BP_first_year <- IEA_end_year + 1 # First year for BP only data
-BP_years <- BP_first_year : BP_last_year # The years for which there is only BP data
+BP_years <- c() #BP_first_year : BP_last_year # The years for which there is only BP data
 
-X_BP_years <- paste0( "X", BP_years )
+X_BP_years <- c() #paste0( "X", BP_years )
 X_BP_last_year <- paste0( "X", BP_last_year )
 
 # If this flag is set then a consistent former USSR line needs to be created during BP sheet processing

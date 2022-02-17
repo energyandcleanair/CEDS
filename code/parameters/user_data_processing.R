@@ -100,8 +100,8 @@ procUsrData <- function( usr_data, proc_instr, mappings,
     X_data_years <- paste0( 'X', seq( year_range[1], year_range[2] ) )
 
     # Replace any missing years with NA
+    mapped_df[, setdiff( X_data_years, names(mapped_df))] <- NA_real_
     mapped_df <- mapped_df %>%
-        dplyr::mutate_at( setdiff( X_data_years, names( . ) ), funs( +NA_real_ ) ) %>%
         dplyr::select( all_of(agg_cols), all_of(X_data_years) )
 
     # Determine if there are instructions at different aggregation levels

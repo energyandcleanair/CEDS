@@ -225,6 +225,7 @@
     IEA_en_stat_ctry_hist <- IEA_en_stat_ctry_hist %>%
         dplyr::group_by( iso, FLOW, PRODUCT) %>%
         tidyr::gather( key = years, value = energy_consumption, all_of(X_IEA_years)) %>%
+        dplyr::filter(!is.na(energy_consumption)) %>%
         dplyr::mutate( energy_consumption = if_else( PRODUCT %in% IEA_TJ_gas_no_TJnet,
                                                      energy_consumption/conversionFactor_naturalgas_TJ_per_kt_Gross,
                                             if_else( PRODUCT %in% IEA_TJ_gas_TJnet,

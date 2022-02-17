@@ -1664,13 +1664,14 @@ disaggregate_country <- function(original_data,
         ratio_check_0 <- ratio_check[which( rowSums( ratio_check[disaggregate_years] ) == 0 ),]
 
         if( nrow(ratio_check_0) > 0 ){
+          zero_data <- NULL
           if( length(non_iso_trend_match) == 1 ) zero_data <-  unique( ratio_check_0[[non_iso_trend_match]] )
           if( length(non_iso_trend_match) > 1 ) zero_data <-  unique(apply(MARGIN = 1, X= ratio_check_0[non_iso_trend_match],FUN=paste0, collapse='-'))
 
          if( allow_dropped_data ) printLog( paste('in disaggregate_country(): There is non zero aggregate data, but no disaggregate trend data for: ',
                                                    paste( zero_data, collapse = ' , '),'
                                                    Some aggregate data may be dropped.'))
-         if( !allow_dropped_data )  stop( paste('in disaggregate_country(): There is non zero aggregate data, but no disaggregate trend data for: ',
+         if( !allow_dropped_data )  warning( paste('in disaggregate_country(): There is non zero aggregate data, but no disaggregate trend data for: ',
                                                  paste( zero_data, collapse = ' , ') ) )
         }
 
@@ -1785,7 +1786,7 @@ disagg_iso_with_population <- function( agg_iso_region, disagg_isos_in_agg_regio
     aggregated_population <- agg_region_iso_populations %>%
         dplyr::select( -iso ) %>%
         dplyr::group_by( Years ) %>%
-        dplyr::summarise_all( funs( sum (., na.rm = TRUE) ) ) %>%
+        dplyr::summarise_all( sum, na.rm = TRUE ) %>%
         dplyr::ungroup( ) %>%
         dplyr::rename( Agg_region_population = Population)
 
@@ -1853,19 +1854,22 @@ disagg_iso_with_population <- function( agg_iso_region, disagg_isos_in_agg_regio
     agg_region_downscaled_reaggregated_for_check <- agg_region_downscaled %>%
         dplyr::select( -iso ) %>%
         dplyr::group_by( fuel, Years ) %>%
-        dplyr::summarise_all( funs( sum (., na.rm = TRUE) ) ) %>%
+        dplyr::summarise_all( sum, na.rm = TRUE) %>%
         dplyr::arrange( fuel, Years ) %>%
         dplyr::mutate( Emissions = round( Emissions, digits = 9 ) ) %>%
-        dplyr::ungroup( )
+        dplyr::ungroup( ) %>%
+      dplyr::select(fuel, Years, Emissions) %>%
+      as.data.frame()
 
     agg_region_of_interest_for_check <- agg_region_of_interest %>%
         dplyr::select( -iso ) %>%
         dplyr::arrange( fuel, Years ) %>%
-        dplyr::mutate( Emissions = round( Emissions, digits = 9 ) )
+        dplyr::mutate( Emissions = round( Emissions, digits = 9 ) ) %>%
+        dplyr::select(fuel, Years, Emissions)
 
     identical_after_downscale <- all.equal(agg_region_downscaled_reaggregated_for_check,agg_region_of_interest_for_check)
 
-    if( identical_after_downscale != TRUE ){
+    if( any(identical_after_downscale) != TRUE ){
 
         stop( paste0( "Downscaled emissions do not equal aggregate region emissions for all fuels. Check population, emissions data, ",
                       "and disagg_iso_with_population function") )

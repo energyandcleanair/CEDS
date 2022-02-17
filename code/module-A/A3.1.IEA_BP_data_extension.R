@@ -148,26 +148,31 @@
     iea_proj_data <- list()
     extendForwarded_iea <- list()
     n_BP_years <- length( BP_years )
+
     for ( i in 1:length( bp_data_full ) ) {
-        iea_bp_data[[i]]$ratio <- iea_bp_data[[i]]$end_year / as.numeric(
-            iea_bp_data[[i]][, X_IEA_end_year ] )
-    # Assume constant where non-existent ratios are formed (by dividing by zero)
-        iea_bp_data[[i]][ !is.finite( iea_bp_data[[i]]$ratio ), "ratio" ] <- 1
-        iea_proj_data[[i]] <- iea_bp_data[[i]]
-    # Fiddle with the data to make the list numeric
-        numeric_bp_year_data <- as.numeric( unlist(
-            iea_proj_data[[i]][, X_BP_years ] ) )
+      iea_bp_data[[i]]$ratio <- iea_bp_data[[i]]$end_year / as.numeric(
+        iea_bp_data[[i]][, X_IEA_end_year ] )
+      # Assume constant where non-existent ratios are formed (by dividing by zero)
+      iea_bp_data[[i]][ !is.finite( iea_bp_data[[i]]$ratio ), "ratio" ] <- 1
+      iea_proj_data[[i]] <- iea_bp_data[[i]]
+      # Fiddle with the data to make the list numeric
+      numeric_bp_year_data <- as.numeric( unlist(
+        iea_proj_data[[i]][, X_BP_years ] ) )
+
+      # Make the projections of IEA data
+      if(n_BP_years>0){
         array_bp_year_data <- array( numeric_bp_year_data,
-            c( length( numeric_bp_year_data ) / n_BP_years, n_BP_years ) )
-    # Make the projections of IEA data
+                                     c( length( numeric_bp_year_data ) / n_BP_years, n_BP_years ) )
         iea_proj_data[[i]][, X_BP_years ] <- iea_bp_data[[i]]$ratio *
-            array_bp_year_data
-        iea_proj_data[[i]] <- iea_proj_data[[i]][,
-            c( "iso", "sector", "fuel", X_BP_years ) ]
-        extendForwarded_iea[[i]] <- merge( iea_data_full[ iea_data_full$fuel %in%
-            bp_drivers[[i]], ], iea_proj_data[[i]],
-            by = c( "iso", "sector", "fuel" ) )
-    }
+          array_bp_year_data
+      }
+      iea_proj_data[[i]] <- iea_proj_data[[i]][,
+                                               c( "iso", "sector", "fuel", X_BP_years ) ]
+      extendForwarded_iea[[i]] <- merge( iea_data_full[ iea_data_full$fuel %in%
+                                                          bp_drivers[[i]], ], iea_proj_data[[i]],
+                                         by = c( "iso", "sector", "fuel" ) )
+  }
+
 
 # Biomass usage is projected by population changes (maybe)
 # Don't use this yet; assume biomass is constant. Might use later.
@@ -187,6 +192,7 @@
     biomass_iea_proj <- biomass_iea_data[, X_IEA_end_year ] * biomass_fuel_ratios
     extendForwarded_iea_biomass <- cbind( biomass_iea_data, biomass_iea_proj )
     names( extendForwarded_iea_biomass ) <- names( extendForwarded_iea[[1]] )
+
 
 # Other fuels are assumed constant. Form column of ones
     other_iea_data <- iea_data_full[ iea_data_full$fuel %in% other_fuels, ]
